@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -113,7 +114,58 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try{
+            DB::beginTransaction();
+
+            $user = User::find($id);
+            $rules = [
+                'name' => 'string|min:10|max:150',
+                'rut' => ['string', Rule::unique('users')->ignore($user->id), new ValidarRut()],
+                'email' => ['email', Rule::unique('users')->ignore($user->id), new ValidarCorreo()],
+                'birth_date' => 'date|before:today|after:01/01/1900|date_format:d/m/Y',
+                'password' => 'string|min:8|max:20',
+            ];
+
+            $customMessages = [
+                'string' => 'El campo :attribute debe ser un texto.',
+                'min' => 'El campo :attribute debe tener un mínimo de :min caracteres.',
+                'max' => 'El campo :attribute debe tener un máximo de :max caracteres.',
+                'unique' => 'El campo :attribute ya existe en la base de datos.',
+                'before' => 'El campo :attribute debe ser una fecha anterior a la actual.',
+                'after' => 'El campo :attribute debe ser una fecha posterior al 01/01/1900.',
+                'date_format' => 'El campo :attribute debe tener el formato dd/mm/aaaa.',
+                'date' => 'El campo :attribute debe ser una fecha válida.',
+            ];
+
+            $validator = Validator::make($request->input(), $rules, $customMessages);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $validator->errors()
+                ], 500);
+            }
+
+            if ($request->birth_date) {
+                $birth_date = Carbon\Carbon::createFromFormat('d/m/Y', $request->birth_date)->format('Y-m-d');
+            }
+            $user->name = $request->name??$user->name;
+            $user->rut = $request->rut??$user->rut;
+            $user->email = $request->email??$user->email;
+            $user->birth_date = $birth_date??$user->birth_date;
+            $user->password = Hash::make($request->password??$user->password);
+            $user->save();
+
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'data' => $user
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

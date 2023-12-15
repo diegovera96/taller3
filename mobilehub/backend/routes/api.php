@@ -33,4 +33,5 @@ Route::group([
     Route::post('login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('register', [UserController::class, 'store']);
+    Route::put('update/{id}', [UserController::class, 'update']);
 });

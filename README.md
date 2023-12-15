@@ -4,15 +4,15 @@ git clone git@github.com:diegovera96/taller3.git
 ```
 # INSTRUCTIONS
 ### MAKE SURE YOU HAVE
-[PHP v8.3.0](https://windows.php.net/download#php-8.3)
+- [PHP v8.3.0](https://windows.php.net/download#php-8.3)
 
-[COMPOSER v2.6.6](https://getcomposer.org/download/)
+- [COMPOSER v2.6.6](https://getcomposer.org/download/)
 
-[MYSQL v8.0.35 ](https://dev.mysql.com/doc/relnotes/mysql/8.0/en/news-8-0-35.html)
+- [MYSQL v8.0.35 ](https://dev.mysql.com/doc/relnotes/mysql/8.0/en/news-8-0-35.html)
 
-[NODE v20.10.0](https://nodejs.org/dist/v20.10.0/)
+- [NODE v20.10.0](https://nodejs.org/dist/v20.10.0/)
 
-[NPM v10.2.3](https://www.npmjs.com/package/npm/v/10.2.3)
+- [NPM v10.2.3](https://www.npmjs.com/package/npm/v/10.2.3)
 
 # BACKEND 
 ```bash
