@@ -17,6 +17,12 @@ use App\Rules\ValidarCorreo;
 
 use Freshwork\ChileanBundle\Rut;
 
+/**
+ * UserController
+ *
+ * Controlador para gestionar las operaciones de los usuarios.
+ */
+
 class UserController extends Controller
 {
     /**
@@ -36,13 +42,18 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Almacena un nuevo recurso de usuario en la base de datos.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
         try {
+            // Inicia una transacción de base de datos
             DB::beginTransaction();
 
+            // Define los mensajes personalizados para la validación
             $customMessages = [
                 'required' => 'El campo :attribute es obligatorio.',
                 'string' => 'El campo :attribute debe ser un texto.',
@@ -55,6 +66,7 @@ class UserController extends Controller
                 'date' => 'El campo :attribute debe ser una fecha válida.',
             ];
 
+            // Crea un validador con las reglas de validación
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|min:10|max:150|regex:/^[a-zA-Z\s]*$/',
                 'rut' => ['required', 'string', 'unique:users', new ValidarRut()],
@@ -62,12 +74,16 @@ class UserController extends Controller
                 'birth_date' => 'required|date_format:d/m/Y|after:01/01/1900'
             ], $customMessages);
 
+            // Si la validación falla, devuelve una respuesta con los errores
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
 
+             // Formatea la fecha de nacimiento y crea una contraseña
             $birth_date = Carbon\Carbon::createFromFormat('d/m/Y', $request->birth_date)->format('Y-m-d');
             $password = Rut::parse($request->rut)->format(Rut::FORMAT_ESCAPED);
+
+            // Crea un nuevo usuario con los datos proporcionados
             $user = User::create([
                 'name' => $request->name,
                 'rut' => $request->rut,
@@ -106,13 +122,22 @@ class UserController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza el recurso especificado en el almacenamiento.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $id
+     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, string $id)
     {
         try{
+            // Inicia una transacción de base de datos
             DB::beginTransaction();
+
+            // Busca el usuario por su ID
             $user = User::find($id);
+
+            // Define los mensajes personalizados para la validación
             $customMessages = [
                 'string' => 'El campo :attribute debe ser un texto.',
                 'min' => 'El campo :attribute debe tener un mínimo de :min caracteres.',
@@ -125,6 +150,7 @@ class UserController extends Controller
                 'same' => 'El campo :attribute debe ser igual al campo :other.'
             ];
 
+            // Crea un validador con las reglas de validación
             $validator = Validator::make($request->all(), [
                 'name' => 'string|min:10|max:150|regex:/^[a-zA-Z\s]*$/',
                 'rut' => ['string', new ValidarRut(), Rule::unique('users')->ignore($user->id)],
@@ -134,16 +160,22 @@ class UserController extends Controller
                 'confirm_password' => 'same:password'
             ], $customMessages);
 
+            // Si la validación falla, devuelve una respuesta con los errores
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
+
+            // Si se proporciona una fecha de nacimiento, la formatea y la asigna al usuario
             if ($request->birth_date) {
                 $birth_date = Carbon\Carbon::createFromFormat('d/m/Y', $request->birth_date)->format('Y-m-d');
                 $user->birth_date = $birth_date??$user->birth_date;
             }
+            // Asigna los nuevos valores al usuario
             $user->name = $request->name??$user->name;
             $user->rut = $request->rut??$user->rut;
             $user->email = $request->email??$user->email;
+
+            // Si se proporciona una contraseña, la asigna al usuario
             if (!$request->password == "") {
                 $user->password = Hash::make($request->password??$user->password);
             }

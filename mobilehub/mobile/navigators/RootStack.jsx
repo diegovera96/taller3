@@ -13,7 +13,6 @@ import { useNavigation } from "@react-navigation/native";
 import { Icon } from "react-native-elements";
 
 const Stack = createStackNavigator();
-// Importa las pantallas necesarias
 import Login from "../components/auth/Login";
 import Register from "../components/auth/Register";
 import Home from "../features/user/Home";
@@ -22,10 +21,27 @@ import Edit from "../features/user/Edit";
 import { useSelector } from "react-redux";
 import { selectId } from "./userSlice";
 
+
+/**
+ * Componente RootStack
+ *
+ * Este componente define la navegación de la aplicación utilizando un stack navigator de React Navigation.
+ * Define varias pantallas (Login, Register, Home, Repo, Edit) y la lógica para cerrar la sesión del usuario.
+ *
+ * @component
+ */
 function RootStack() {
   const isAuth = useSelector(selectId);
   const dispatch = useDispatch();
 
+
+    /**
+   * Maneja el cierre de sesión del usuario.
+   *
+   * Despacha la acción de cierre de sesión, elimina el token de acceso del almacenamiento y navega a la pantalla de inicio de sesión.
+   *
+   * @param {object} navigation - El objeto de navegación de React Navigation.
+   */
   const handleLogout = async (navigation) => {
     try {
       console.log("cerrando sesión");
