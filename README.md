@@ -58,3 +58,8 @@ Example: GIT_TOKEN=ghp_FDSAfDSAFdsaf32142dSAd
 cd mobilehub/frontend
 npm install
 ```
+
+### Run mobile
+```bash
+npm start
+```
