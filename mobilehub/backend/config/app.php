@@ -186,7 +186,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
-        'Rut'   => Freshwork\ChileanBundle\Laravel\Facades\Rut::class
+        'Rut'   => Freshwork\ChileanBundle\Laravel\Facades\Rut::class,
 
     ])->toArray(),
 

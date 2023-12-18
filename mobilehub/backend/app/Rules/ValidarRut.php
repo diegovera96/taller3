@@ -23,13 +23,13 @@ class ValidarRut implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         //Correcto formato 12.345.678-9
-        if($value !== Rut::parse($value)->format(Rut::FORMAT_COMPLETE)){
-            $fail('Formato incorrecto.');
+        if($value !== Rut::parse($value)->quiet()->format(Rut::FORMAT_COMPLETE)){
+            $fail('Ingrese rut con puntos, guión y K mayúscula.');
         }
 
         //Validar número verificador
-        if(!Rut::parse($value)->validate()){
-            $fail('Número verificador incorrecto.');
+        if(!Rut::parse($value)->quiet()->validate()){
+            $fail('Rut inválido.');
         }
     }
 }

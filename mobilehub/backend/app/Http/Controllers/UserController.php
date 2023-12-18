@@ -43,13 +43,6 @@ class UserController extends Controller
         try {
             DB::beginTransaction();
 
-            $rules = [
-                'name' => 'required|string|min:10|max:150',
-                'rut' => ['required', 'string', 'unique:users', new ValidarRut()],
-                'email' => ['required', 'email', 'unique:users', new ValidarCorreo()],
-                'birth_date' => 'required|date|before:today|after:01/01/1900|date_format:d/m/Y',
-            ];
-
             $customMessages = [
                 'required' => 'El campo :attribute es obligatorio.',
                 'string' => 'El campo :attribute debe ser un texto.',
@@ -62,12 +55,15 @@ class UserController extends Controller
                 'date' => 'El campo :attribute debe ser una fecha válida.',
             ];
 
-            $validator = Validator::make($request->input(), $rules, $customMessages);
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|min:10|max:150|regex:/^[a-zA-Z\s]*$/',
+                'rut' => ['required', 'string', 'unique:users', new ValidarRut()],
+                'email' => ['required', 'email', 'unique:users', new ValidarCorreo()],
+                'birth_date' => 'required|date_format:d/m/Y|after:01/01/1900'
+            ], $customMessages);
+
             if ($validator->fails()) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => $validator->errors()
-                ], 500);
+                return response()->json(['errors' => $validator->errors()], 422);
             }
 
             $birth_date = Carbon\Carbon::createFromFormat('d/m/Y', $request->birth_date)->format('Y-m-d');
@@ -83,7 +79,7 @@ class UserController extends Controller
             DB::commit();
             return response()->json([
                 'status' => 'success',
-                'data' => $user
+                'message' => 'Usuario creado correctamente.'
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -116,16 +112,7 @@ class UserController extends Controller
     {
         try{
             DB::beginTransaction();
-
             $user = User::find($id);
-            $rules = [
-                'name' => 'string|min:10|max:150',
-                'rut' => ['string', Rule::unique('users')->ignore($user->id), new ValidarRut()],
-                'email' => ['email', Rule::unique('users')->ignore($user->id), new ValidarCorreo()],
-                'birth_date' => 'date|before:today|after:01/01/1900|date_format:d/m/Y',
-                'password' => 'string|min:8|max:20',
-            ];
-
             $customMessages = [
                 'string' => 'El campo :attribute debe ser un texto.',
                 'min' => 'El campo :attribute debe tener un mínimo de :min caracteres.',
@@ -135,30 +122,38 @@ class UserController extends Controller
                 'after' => 'El campo :attribute debe ser una fecha posterior al 01/01/1900.',
                 'date_format' => 'El campo :attribute debe tener el formato dd/mm/aaaa.',
                 'date' => 'El campo :attribute debe ser una fecha válida.',
+                'same' => 'El campo :attribute debe ser igual al campo :other.'
             ];
 
-            $validator = Validator::make($request->input(), $rules, $customMessages);
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => $validator->errors()
-                ], 500);
-            }
+            $validator = Validator::make($request->all(), [
+                'name' => 'string|min:10|max:150|regex:/^[a-zA-Z\s]*$/',
+                'rut' => ['string', new ValidarRut(), Rule::unique('users')->ignore($user->id)],
+                'email' => ['email', new ValidarCorreo(), Rule::unique('users')->ignore($user->id)],
+                'birth_date' => 'before:today|after:01/01/1900|date_format:d/m/Y',
+                'password' => 'nullable|string|min:8|max:20',
+                'confirm_password' => 'same:password'
+            ], $customMessages);
 
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
             if ($request->birth_date) {
                 $birth_date = Carbon\Carbon::createFromFormat('d/m/Y', $request->birth_date)->format('Y-m-d');
+                $user->birth_date = $birth_date??$user->birth_date;
             }
             $user->name = $request->name??$user->name;
             $user->rut = $request->rut??$user->rut;
             $user->email = $request->email??$user->email;
-            $user->birth_date = $birth_date??$user->birth_date;
-            $user->password = Hash::make($request->password??$user->password);
+            if (!$request->password == "") {
+                $user->password = Hash::make($request->password??$user->password);
+            }
+
             $user->save();
 
             DB::commit();
             return response()->json([
-                'status' => 'success',
-                'data' => $user
+                'status' => 'Success',
+                'message' => 'Usuario actualizado correctamente.'
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
