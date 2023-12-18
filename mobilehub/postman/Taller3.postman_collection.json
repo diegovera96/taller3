@@ -1,0 +1,165 @@
+{
+	"info": {
+		"_postman_id": "7b88e1fa-d7ae-4680-9a7d-bed2b952495a",
+		"name": "Taller3",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29363778"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"maria.becerra@ce.ucn.cl\",\n    \"password\": \"176248777\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.0.104:8000/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"0",
+						"104"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "//For date use  format dd/mm/YYYY\n{\n    \"name\": \"Maria Becerra\",\n    \"rut\": \"17.624.877-7\",\n    \"email\": \"maria.becerra@ce.ucn.cl\",\n    \"birth_date\": \"05/04/1992\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.0.104:8000/api/auth/register",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"0",
+						"104"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTkyLjE2OC4wLjEwNDo4MDAwL2FwaS9hdXRoL2xvZ2luIiwiaWF0IjoxNzAyNjE4MjUzLCJleHAiOjE3MDI2MjE4NTMsIm5iZiI6MTcwMjYxODI1MywianRpIjoibTJ3QUJSSUZlTTZISThnTSIsInN1YiI6IjMiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.kYRZGY7AraFOcbB48fMNK4D0K6KgW79mF3c5gNyAzow",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://192.168.0.104:8000/api/auth/logout",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"0",
+						"104"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTkyLjE2OC4wLjEwNDo4MDAwL2FwaS9hdXRoL2xvZ2luIiwiaWF0IjoxNzAyNjE5NjM5LCJleHAiOjE3MDI2MjMyMzksIm5iZiI6MTcwMjYxOTYzOSwianRpIjoiODVXcjREa015eXlJYjB1YSIsInN1YiI6IjMiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.peHaSJwfhjatpJweaLD-sA2aLOZBs-BfgCRqWWy34Uo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "//Add user id in URL\n//For date use  format dd/mm/YYYY\n{\n    \"password\": \"password\",\n    \"confirm_password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.0.104:8000/api/auth/update/1",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"0",
+						"104"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"auth",
+						"update",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
