@@ -17,6 +17,7 @@ git clone git@github.com:diegovera96/taller3.git
 # BACKEND 
 ```bash
 cd mobilehub/backend
+composer install
 ```
 Copy .env.example and rename to .env and open
 ### Configure DB Info
@@ -29,7 +30,6 @@ Copy .env.example and rename to .env and open
 
 ### Open terminal in backend folder
 ```bash
-composer install
 php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
 php artisan jwt:secret
 php artisan migrate
@@ -40,4 +40,21 @@ php artisan db:seed --class=UserSeeder
 ```bash
 php artisan serve --host=0.0.0.0
 ```
-## Dependencies
+
+# FRONTEND
+
+Rename .env.copy and open
+
+### Configure .env
+
+> REACT_APP_PUBLIC_IP=your-ip
+
+Example: REACT_APP_PUBLIC_IP=192.168.0.1
+
+> GIT_TOKEN=your-token
+
+Example: GIT_TOKEN=ghp_FDSAfDSAFdsaf32142dSAd
+```bash
+cd mobilehub/frontend
+npm install
+```
